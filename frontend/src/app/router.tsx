@@ -6,25 +6,51 @@
  */
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, ReactNode } from 'react';
 import { RootLayout } from '@/pages/layouts/RootLayout';
 import { LoadingSpinner } from '@/core/components/LoadingSpinner';
 import { ErrorBoundary } from '@/core/components/ErrorBoundary';
 
 const HomePage = lazy(() => import('@/pages/Home'));
+const LoginPage = lazy(() => import('@/pages/Login'));
+const RegisterPage = lazy(() => import('@/pages/Register'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
+
+const ErrorBoundaryWrapper = ({ children }: { children: ReactNode }) => (
+  <ErrorBoundary>{children}</ErrorBoundary>
+);
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    errorElement: <ErrorBoundary />,
+    errorElement: (
+      <ErrorBoundaryWrapper>
+        <NotFoundPage />
+      </ErrorBoundaryWrapper>
+    ),
     children: [
       {
         index: true,
         element: (
           <Suspense fallback={<LoadingSpinner />}>
             <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'login',
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LoginPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'register',
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <RegisterPage />
           </Suspense>
         ),
       },
